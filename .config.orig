@@ -1,0 +1,3 @@
+BUILDDIR=/dev/shm/$(NAME-LINK)
+NAME=pfsm-to-nim-service2b
+PREFIX=/usr/local/bin
