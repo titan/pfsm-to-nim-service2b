@@ -50,6 +50,7 @@ toNim fsm
                                            , generateIndexKeys pre indexes
                                            , generateSearchable pre fsm.model
                                            , generateFieldValue pre fsm.model
+                                           , generateDeepCopy pre fsm.model
                                            , generateMainModule pre name fsm
                                            ]
   where
@@ -343,7 +344,7 @@ toNim fsm
 
     generateFieldValue : String -> List Parameter -> String
     generateFieldValue pre params
-      = List.join "\n" [ "proc field_value(model:" ++ pre ++ "Model, field: string): string ="
+      = List.join "\n" [ "proc field_value(model: " ++ pre ++ "Model, field: string): string ="
                        , (indent indentDelta) ++ "case field:"
                        , List.join "\n" $ map (generateFieldValueCase (indentDelta * 2)) params
                        , (indent (indentDelta * 2)) ++ "else:"
@@ -359,6 +360,14 @@ toNim fsm
           = List.join "\n" [ (indent idt) ++ "of \"" ++ n ++ "\":"
                            , (indent (idt + indentDelta)) ++ "return string_only model." ++ (toNimName n)
                            ]
+
+    generateDeepCopy : String -> List Parameter -> String
+    generateDeepCopy pre params
+      = List.join "\n" [ "proc deep_copy(model: " ++ pre ++ "Model): " ++ pre ++ "Model ="
+                       , (indent indentDelta) ++ pre ++ "Model("
+                       , List.join "\n" $ map (\(n, _, _) => (indent (indentDelta * 2)) ++ (toNimName n) ++ ": model." ++ (toNimName n) ++ ",") params
+                       , (indent indentDelta) ++ ")"
+                       ]
 
     generateMainModule : String -> String -> Fsm -> String
     generateMainModule pre name fsm
@@ -484,6 +493,7 @@ toNim fsm
                                , (indent (idt + indentDelta)) ++ "index_keys: index_keys,"
                                , (indent (idt + indentDelta)) ++ "searchable: searchable,"
                                , (indent (idt + indentDelta)) ++ "field_value: field_value,"
+                               , (indent (idt + indentDelta)) ++ "deep_copy: deep_copy,"
                                , (indent idt) ++ ")"
                                ]
 
