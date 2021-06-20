@@ -399,7 +399,7 @@ toNim fsm
           where
             responseBodyGenerator : Nat -> String -> String -> List (Nat, Tipe) -> List Parameter -> String
             responseBodyGenerator idt name funname _ _
-              = (indent idt) ++ "return \"\"\"{\"code\":$1,\"payload\":\"$2\",\"callback\":\"$3\"}\"\"\" % [$a0, a1, $ctx.callback]"
+              = (indent idt) ++ "return \"{\\\"code\\\":\" & $a0 & \",\\\"payload\\\":\\\"\" & a1 & \"\\\",\\\"callback\\\":\\\"\" & $ctx.callback & \"\\\",\\\"fsmid\\\":\\\"\" & $ctx.fsmid & \"\\\"}\""
 
             generateDefaultOutputDelegate : Nat -> String -> String -> SortedMap Expression Tipe -> List Parameter -> Action -> String
             generateDefaultOutputDelegate idt pre name env model act@(OutputAction (MkPort "response" _) _)
